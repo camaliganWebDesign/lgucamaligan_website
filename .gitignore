@@ -25,7 +25,7 @@ wp-snapshots/*
 /wp-content/plugins/*
 !wp-content/plugins/lgucamaligan-customizations
 /wp-content/themes/*
-!wp-content/themes/lgucamaligan-blocktheme
+!wp-content/themes/lgucamaligan-theme
  
 # Ignore node dependency directories.
 **/node_modules/
