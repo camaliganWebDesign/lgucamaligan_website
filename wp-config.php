@@ -79,12 +79,14 @@ $table_prefix = 'Nb45KUeJi7_';
  *
  * @link https://wordpress.org/support/article/debugging-in-wordpress/
  */
-define( 'WP_DEBUG', false );
+define( 'WP_DEBUG', true );
+define( 'SCRIPT_DEBUG', true );
 
 /* Add any custom values between this line and the "stop editing" line. */
-
-
-
+//===========================================================================
+// script and styles versioning
+define( 'WP_JS_CSS_VERSION', 'v1.0.0' );
+//===========================================================================
 /* That's all, stop editing! Happy publishing. */
 
 /** Absolute path to the WordPress directory. */
