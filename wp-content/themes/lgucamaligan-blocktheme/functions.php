@@ -31,12 +31,20 @@
  */
     if( !function_exists( 'lgucamaligan_blocktheme_scripts_and_styles' ) ) {
         function lgucamaligan_blocktheme_scripts_and_styles() {
+            //reload scripts and styles depending if the site is in development mode or is live
+            $site_mode = str_contains( get_home_url(), 'localhost' ) ? 'DEV' : 'LIVE';
+            $version = ($site_mode=='DEV') ? time() : ( defined(WP_JS_CSS_VERSION) ? WP_JS_CSS_VERSION : '1.0.0' );
             //scripts
             wp_enqueue_script('vue', 'https://unpkg.com/vue@3', [], '3');
-            wp_enqueue_script('lgucamaligan_blocktheme_scripts', get_stylesheet_directory_uri() .'/js/main.js', [], WP_JS_CSS_VERSION);
+            wp_enqueue_script('lgucamaligan_blocktheme_scripts', get_stylesheet_directory_uri() .'/js/main.js', [], $version, true );
             //styles
-            wp_enqueue_style( 'lgucamaligan_blocktheme_styles', get_stylesheet_directory_uri() .'/css/index.css', [], WP_JS_CSS_VERSION );
-             
+            wp_enqueue_style( 'lgucamaligan_blocktheme_styles', get_stylesheet_directory_uri() .'/css/index.css', [], $version );
+            //variable localization - allows javascripts to access variables declared in here
+            wp_localize_script( 'lgucamaligan_blocktheme_scripts', 'lguLocalizedVars',
+                [
+                    'nonce' => wp_create_nonce('wp_rest'),
+                ]
+            );
         }
         add_action( 'wp_enqueue_scripts', 'lgucamaligan_blocktheme_scripts_and_styles' );
     }
@@ -127,7 +135,7 @@
     add_action( 'widgets_init', 'lgu_hide_widget_areas_to_certain_users', 11 );
 //==============================================================================================================
 /**
- * Adds / Updates Custom Role named 'page_administrator'
+ * Adds Updates Custom Role named 'page_administrator'
  */
     if( !function_exists( 'lgu_add_page_admin_role' ) ) {
         function lgu_add_page_admin_role() {
@@ -160,10 +168,19 @@
     }
     add_action( 'init', 'lgu_add_page_admin_role' );
 //==============================================================================================================
-
-
-
-
+// Custom Rest APIs and Authentications
+require get_template_directory() . '/inc/api-fetcher.php';
+//==============================================================================================================
+// enqueued script tag modifier
+function script_type_module( $tag, $handle, $src ) {
+    if ( 'lgucamaligan_blocktheme_scripts' === $handle ) {
+        $tag = '<script type="module" src="' . esc_url( $src ) . '"></script>';
+    }
+ 
+    return $tag;
+}
+add_filter( 'script_loader_tag', 'script_type_module', 10, 3 );
+//==============================================================================================================
 
 
 

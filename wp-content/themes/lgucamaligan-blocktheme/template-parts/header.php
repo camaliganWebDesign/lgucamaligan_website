@@ -86,12 +86,14 @@
 			));
 		?>
 	</div>
+</div>
 
-	<div class="lgu-main-content-container" id="lguMainContent">
-	<!-- TODO: add condition to show these tags if in pages owned by page administrators -->
-	
-		<div class="page-content-container">
-			<div id="customizable-area">
+<div class="lgu-main-content-container">
+<!-- TODO: add condition to show these tags if in pages owned by page administrators -->
+
+	<div class="page-content-container">
+		<div class="customizable-area">
+
 	
 
 

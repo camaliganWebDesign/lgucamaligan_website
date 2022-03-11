@@ -48,14 +48,14 @@ define( 'DB_COLLATE', '' );
  *
  * @since 2.6.0
  */
-define( 'AUTH_KEY',         'tLoAf]x&0a7j[B*Ud7TS&z|h/mKT#SWmYB>lw)@f@FCsg~{5wXB84F+f/C?QtC6L' );
-define( 'SECURE_AUTH_KEY',  'weTiHg%FcY-6c)tDfbLG3LAmfM7Vs _qr$M(yS9$gZ^C/N[P`]6crM~L]W4dD|0A' );
-define( 'LOGGED_IN_KEY',    'E*9:?IoXi[0*t.Qg+E^Nw)lsYL2!d6z#_Q&Gt5(b$J59;l`0`HW;!cy-Kt3=D,LP' );
-define( 'NONCE_KEY',        'rU.W@Mz3IhpD4r<[}VzK?cqh)$f#x7r1JF%p80,RTSLdeC:6kDGvpkEFOKikz9?S' );
-define( 'AUTH_SALT',        'KiM8A3O6HM.yp #n~-&PB}GS:qi>9aEHu@o;VQ]Bf:A&8|JUDc!LX6c}>bS$wHU?' );
-define( 'SECURE_AUTH_SALT', 'OF&rz6# C^F7?FU)A.d.|KJ&~%o@rFB@NoUUG1MJN[pN@=$/K ~6I1HZbG$/c@~b' );
-define( 'LOGGED_IN_SALT',   '@{Ms (F^#aVZMxHN3)Fxpe5dG@ 3L:$HRpUtnMk6WVf3Pst!0i&!+4&[<M$K{rbB' );
-define( 'NONCE_SALT',       'F9&T9%ua|}3K:.|9>},`[x;,c?c6r$KX/D?/-6ZPD~{P:v&[-p}s9YC X{Z1Cy-=' );
+define('AUTH_KEY',         'H)BNU0S+TN[ 7_Mg0>pvI}F!yZuSSKvP^3<W0&U>]^^-7V)+]LAL]{rS;.keSfwJ');
+define('SECURE_AUTH_KEY',  'mhUJkY04vyM2}>k7kI!i{[d5goo`j9a,~%N_:Xy`!wrGEh(d0m.mz;.DLtNXB>Rv');
+define('LOGGED_IN_KEY',    '<iDH@~>m-&Q!YKY*90{389]UYz-8DmtO8GEc+.qwo!x@FWCu#FnH4;Fl$k^sY$$0');
+define('NONCE_KEY',        '`UCo`+.wu0^e|4t*ZgK~$;+BGTJnw$+lgLnsn|Cn@5 :p=9!e+6sYRmh6s[WQ]|/');
+define('AUTH_SALT',        'U/G[! 0!#^xa8zE+t69SUxSI>?,oze?Z1$?x&#d0,wed(:[+K6E-f)&wHtIg2C$x');
+define('SECURE_AUTH_SALT', 'D%2iUSR@djgtt{EjAkaAP!sE.kZ8^|%`B%MD(M.&nEYrHtFE4*b7juzyTiKS@|8J');
+define('LOGGED_IN_SALT',   'p{3[*>mL%4c=()m7a%w!p`w`&ayCh(UQI)>t|{M:XjPE =[vQd6Ncb-D#Ss+2UBV');
+define('NONCE_SALT',       'b?%Wk{Wg|-+;:[!@J!ddvF<7{jGOHY#j[:Pp3I[E1$6%ODJ(^0H#^mz#2][EH5Du');
 
 /**#@-*/
 
@@ -84,9 +84,10 @@ define( 'SCRIPT_DEBUG', true );
 
 /* Add any custom values between this line and the "stop editing" line. */
 //===========================================================================
-// script and styles versioning
+// script and styles versioning control
 define( 'WP_JS_CSS_VERSION', 'v1.0.0' );
 //===========================================================================
+
 /* That's all, stop editing! Happy publishing. */
 
 /** Absolute path to the WordPress directory. */
