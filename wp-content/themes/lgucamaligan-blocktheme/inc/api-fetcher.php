@@ -26,18 +26,19 @@ add_filter( 'rest_authentication_errors', function( $result ) {
 
 // create new custom endpoint for nav menus - optionally accepts Menu slugs (Menu name converted to slug format)
 function lgu_get_wp_menus() {
-    $menuNames = array();
+    $menu_names = array();
     if( isset($_GET['name']) ) :
-        array_push( $menuNames, $_GET['name']  );
+        array_push( $menu_names, $_GET['name']  );
     else :
-        $menuNames = get_registered_nav_menus();
-        //return $menuNames;
+        $menus = get_terms('nav_menu');
+        foreach( $menus as $menu ) {
+            array_push($menu_names, $menu->slug);
+        }
     endif;
 
     $menus = [];
-    foreach( $menuNames as $menu_id => $menu_name ) {
-        $menu_slug = str_replace(" ", "-", strtolower($menu_name));
-        $menu_content = wp_get_nav_menu_items( $menu_slug, [ 'orderby' => 'menu_order' ]);
+    foreach( $menu_names as $menu_name ) {
+        $menu_content = wp_get_nav_menu_items( $menu_name, [ 'orderby' => 'menu_order' ]);
         $filtered_content = [];
         if( is_array($menu_content) && count($menu_content) > 0 ) :
             foreach( $menu_content as $content ) {
@@ -50,38 +51,9 @@ function lgu_get_wp_menus() {
                 ]);
             }
         endif;
-
-        // TODO: create script that will group nav menus
-        /*$current_group = $filtered_content;
-        $grouped_content = [];
-        foreach( $filtered_content as $content ) {
-            if( $parent_id = $content->menu_item_parent != "0" ):
-                foreach( $grouped_content as $new_content ) {
-                    $current_group = $new_content;
-                    while(1) {
-                        if( $current_group->ID == $parent_id ) :
-                            if( array_key_exists( 'menu_children', $new_content ) ) :
-                                $current_group = $new_content->
-                    }
-
-
-                    if( $new_content->ID == $parent_id ) :
-
-                        if( array_key_exists( 'menu_children', $new_content ) ) :
-
-                            while(1)
-                }
-            else :
-                array_push($grouped_content, $content);
-            endif;
-        }*/
-
-        
-        $menus[$menu_name] = $filtered_content;
-
+        $menus[$menu_name] = array_group_organizer( $filtered_content, 'ID', 'menu_item_parent' );
     }
     return $menus;
-    //return wp_get_nav_menu_items('');
 }
 add_action( 'rest_api_init', function () {
         register_rest_route( 'custom-routes', '/wp-menus', array(
@@ -89,3 +61,79 @@ add_action( 'rest_api_init', function () {
         'callback' => 'lgu_get_wp_menus',
     ) );
 } );
+
+function array_group_organizer( $array_to_sort, $item_id_key, $parent_id_key ) {
+    $cg_matrix = [ [] ];
+    $cg_matrix_c_index = [ 0 ];
+    $matrix_step = 0;
+    $matrix_c_index_start = 0;
+    while( count( $array_to_sort ) > 0 ) {
+        for( $a = 0; $a < count( $array_to_sort ); $a++ ) {
+            if( !isset( $array_to_sort[$a]->$parent_id_key ) ||
+                (int)$array_to_sort[$a]->$parent_id_key <= 0 ||
+                $array_to_sort[$a]->$parent_id_key == "" ):
+                array_push( $cg_matrix[0], $array_to_sort[$a] );
+                array_splice( $array_to_sort, $a, 1 );
+                break;
+            else:
+                for( $b = $matrix_c_index_start; $b < count( $cg_matrix[$matrix_step] ); $b++ ) {
+                    $current_g = $cg_matrix[ $matrix_step ];
+                    if( $current_g[$b]->ID == $array_to_sort[$a]->$parent_id_key ):
+                        if( !isset( $current_g[$b]->children ) ):
+                            $current_g[$b]->children = [];
+                        endif;
+                        array_push( $current_g[$b]->children, $array_to_sort[$a] );
+                        array_splice( $array_to_sort, $a, 1 );
+                        $cg_matrix[$matrix_step] = $current_g;
+                        $matrix_c_index_start = 0;
+                        $matrix_step = 0;
+                        for( $c = count( $cg_matrix ) - 2; $c >= 0; $c-- ) {
+                            $cg_matrix[ $c ][ $cg_matrix_c_index[ $c ] ]->children = $cg_matrix[ $c + 1 ];
+                            array_splice( $cg_matrix, $c + 1, 1 );
+                            array_splice( $cg_matrix_c_index, $c + 1, 1 );
+                        }
+                        break 2;
+                    else:
+                        $matrix_count = count( $cg_matrix );
+                        $cg_matrix_c_index[ $matrix_step ] = $b;
+                        if( isset( $current_g[ $b ]->children ) ):
+                            $cg_matrix[ $matrix_count ] = $current_g[ $b ]->children;
+                            $matrix_step += 1;
+                            $matrix_c_index_start = 0;
+                        else:
+                            $last_array = $matrix_count - 1;
+                            $current_index = $b;
+                            if( $current_index + 1 < count( $cg_matrix[ $last_array ] ) ):
+                                $matrix_c_index_start = $current_index + 1;
+                            else:
+                                $steps_to_back = 0;
+                                for( $d = $matrix_count - 1; $d > 0; $d-- ) {
+                                    if( count( $cg_matrix[$d] ) - 1 <= $cg_matrix_c_index[$d] ):
+                                        $steps_to_back++;
+                                    else:
+                                        break;
+                                    endif;
+                                }
+                                $matrix_step -= $steps_to_back;
+                                for( $e = count( $cg_matrix ) - 2; $e >= 0; $e-- ) {
+                                    if( $steps_to_back == 0 ):
+                                        break;
+                                    endif;
+                                    $cg_matrix[ $e ][ $cg_matrix_c_index[ $e ] ]->children = $cg_matrix[ $e + 1 ];
+                                    array_splice( $cg_matrix, $e + 1, 1 );
+                                    array_splice( $cg_matrix_c_index, $e + 1, 1 );
+                                    $steps_to_back--;
+                                }
+                                $matrix_c_index_start = $cg_matrix_c_index[ $matrix_step ] + 1;
+                            endif;
+                        endif;
+                        $a = -1;
+                        break;
+                    endif;
+                }
+            endif;
+        }
+    }
+
+    return $cg_matrix[0];
+}
