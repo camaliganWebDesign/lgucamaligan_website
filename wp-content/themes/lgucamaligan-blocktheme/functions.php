@@ -42,7 +42,13 @@
             //variable localization - allows javascripts to access variables declared in here
             wp_localize_script( 'lgucamaligan_blocktheme_scripts', 'lguLocalizedVars',
                 [
-                    'nonce' => wp_create_nonce('wp_rest'),
+                    'api' => [
+                        'nonce' => wp_create_nonce('wp_rest')
+                    ],
+                    'site' => [
+                        'homeUrl'  => get_home_url(),
+                        'themeUrl' => get_theme_root_uri()
+                    ]
                 ]
             );
         }

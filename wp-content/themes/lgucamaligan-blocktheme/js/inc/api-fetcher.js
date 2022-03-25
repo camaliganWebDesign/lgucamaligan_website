@@ -1,8 +1,8 @@
-export const ApiFetcher = {
+export const API = {
 	headers: function() {
 		return {
 	      "Content-Type": "application/json",
-	      "X-WP-Nonce" : lguLocalizedVars.nonce
+	      "X-WP-Nonce" : lguLocalizedVars.api.nonce
 	    }
 	},
 	get: async function( API ) {
